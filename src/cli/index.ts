@@ -12,20 +12,18 @@ import { formatModelsTable } from '../utils/model-formatter.js';
 // Load environment variables
 dotenv.config();
 
-// Get package version
-const version = '2.0.0';
-
 const registry = new ProviderRegistry();
 const chatCommand = new ChatCommand(registry);
 const listCommand = new ListProvidersCommand(registry);
 
-export function createCLI(): Command {
+export async function createCLI(): Promise<Command> {
+  const {default:{version}} = await import('../../package.json', { with: { type: 'json' } });
   const program = new Command();
   
   program
     .name('msg-ai')
     .description('Multi-provider AI chat CLI powered by Vercel AI SDK')
-    .version(version);
+    .version(version as unknown as string);
   
   // Main chat command (default)
   program
@@ -165,7 +163,7 @@ export function createCLI(): Command {
 }
 
 export async function run(): Promise<void> {
-  const program = createCLI();
+  const program = await createCLI();
   
   try {
     await program.parseAsync(process.argv);
