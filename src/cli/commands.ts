@@ -38,8 +38,10 @@ export class ChatCommand {
       try {
         if (options.stream) {
           spinner.stop();
-          console.log(chalk.cyan(`${provider.displayName}:`));
+          const modelId = options.model || provider.defaultModel;
+          console.log(chalk.cyan(`${provider.displayName} (${modelId}):`));
           
+          const startTime = Date.now();
           try {
             const stream = provider.streamChat(
               [{ role: 'user', content: message }],
@@ -49,7 +51,13 @@ export class ChatCommand {
             for await (const chunk of stream) {
               process.stdout.write(chunk);
             }
-            console.log();
+            
+            if (options.showTiming !== false) {
+              const elapsedTime = ((Date.now() - startTime) / 1000).toFixed(3);
+              console.log(chalk.gray(`\n  (took ${elapsedTime} seconds)`));
+            } else {
+              console.log(); // Just add a newline
+            }
           } catch (streamError: any) {
             // Clear the provider name line and spinner output
             process.stdout.write('\r\x1b[K\x1b[1A\x1b[K');
@@ -83,7 +91,8 @@ export class ChatCommand {
             options
           );
           
-          spinner.succeed(chalk.green(`Response from ${provider.displayName}`));
+          const modelId = options.model || provider.defaultModel;
+          spinner.succeed(chalk.green(`Response from ${provider.displayName} (${modelId})`));
           console.log();
           console.log(response.content);
           

@@ -37,6 +37,10 @@ export abstract class BaseProvider {
     return this.config.displayName;
   }
   
+  get defaultModel(): string {
+    return this.config.defaultModel;
+  }
+  
   isAvailable(): boolean {
     return !!this.apiKey;
   }

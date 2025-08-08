@@ -38,6 +38,8 @@ export function createCLI(): Command {
     .option('--no-stream', 'Disable streaming')
     .option('--system <prompt>', 'System prompt')
     .option('-r, --reasoning <effort>', 'Reasoning effort for GPT-5 (minimal, low, medium, high)')
+    .option('--timing', 'Show response timing', true)
+    .option('--no-timing', 'Hide response timing')
     .action(async (provider, messageArray, options) => {
       if (!provider && (!messageArray || messageArray.length === 0)) {
         // No arguments provided, show help
@@ -71,6 +73,7 @@ export function createCLI(): Command {
           stream: options.stream,
           systemPrompt: options.system,
           reasoningEffort: options.reasoning,
+          showTiming: options.timing,
         });
       } catch (error) {
         // Import and use handleChatError
@@ -145,6 +148,8 @@ export function createCLI(): Command {
     .option('-x, --max-tokens <number>', 'Maximum tokens')
     .option('-s, --stream', 'Stream the response', true)
     .option('-r, --reasoning <effort>', 'Reasoning effort for GPT-5 (minimal, low, medium, high)')
+    .option('--timing', 'Show response timing', true)
+    .option('--no-timing', 'Hide response timing')
     .action(async (message, options) => {
       await chatCommand.execute(options.provider, message, {
         model: options.model,
@@ -152,6 +157,7 @@ export function createCLI(): Command {
         maxTokens: options.maxTokens ? parseInt(options.maxTokens) : undefined,
         stream: options.stream,
         reasoningEffort: options.reasoning,
+        showTiming: options.timing,
       });
     });
   

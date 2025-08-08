@@ -35,6 +35,7 @@ export interface ChatOptions {
   systemPrompt?: string;
   stream?: boolean;
   reasoningEffort?: 'minimal' | 'low' | 'medium' | 'high';
+  showTiming?: boolean;
 }
 
 export interface ChatRequest {

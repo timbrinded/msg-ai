@@ -7,7 +7,7 @@ const config: ProviderConfig = {
   name: 'openai',
   displayName: 'OpenAI',
   envKey: 'OPENAI_API_KEY',
-  defaultModel: 'gpt-4o-mini',
+  defaultModel: 'gpt-5',
   models: [
     { id: 'gpt-4o', name: 'GPT-4 Optimized', maxTokens: 16384 },
     { id: 'gpt-4o-mini', name: 'GPT-4 Optimized Mini', maxTokens: 16384 },
