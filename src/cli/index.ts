@@ -37,6 +37,7 @@ export function createCLI(): Command {
     .option('-s, --stream', 'Stream the response', true)
     .option('--no-stream', 'Disable streaming')
     .option('--system <prompt>', 'System prompt')
+    .option('-r, --reasoning <effort>', 'Reasoning effort for GPT-5 (minimal, low, medium, high)')
     .action(async (provider, messageArray, options) => {
       if (!provider && (!messageArray || messageArray.length === 0)) {
         // No arguments provided, show help
@@ -62,13 +63,20 @@ export function createCLI(): Command {
         process.exit(1);
       }
       
-      await chatCommand.execute(actualProvider, message, {
-        model: options.model,
-        temperature: parseFloat(options.temperature),
-        maxTokens: options.maxTokens ? parseInt(options.maxTokens) : undefined,
-        stream: options.stream,
-        systemPrompt: options.system,
-      });
+      try {
+        await chatCommand.execute(actualProvider, message, {
+          model: options.model,
+          temperature: parseFloat(options.temperature),
+          maxTokens: options.maxTokens ? parseInt(options.maxTokens) : undefined,
+          stream: options.stream,
+          systemPrompt: options.system,
+          reasoningEffort: options.reasoning,
+        });
+      } catch (error) {
+        // Import and use handleChatError
+        const { handleChatError } = await import('../utils/errors.js');
+        handleChatError(error, actualProvider);
+      }
     });
   
   // List providers command
@@ -136,12 +144,14 @@ export function createCLI(): Command {
     .option('-t, --temperature <number>', 'Temperature (0-2)', '0.7')
     .option('-x, --max-tokens <number>', 'Maximum tokens')
     .option('-s, --stream', 'Stream the response', true)
+    .option('-r, --reasoning <effort>', 'Reasoning effort for GPT-5 (minimal, low, medium, high)')
     .action(async (message, options) => {
       await chatCommand.execute(options.provider, message, {
         model: options.model,
         temperature: parseFloat(options.temperature),
         maxTokens: options.maxTokens ? parseInt(options.maxTokens) : undefined,
         stream: options.stream,
+        reasoningEffort: options.reasoning,
       });
     });
   

@@ -1,5 +1,5 @@
-import { createOpenAI } from '@ai-sdk/openai';
-import { LanguageModelV1 } from 'ai';
+import { createXai } from '@ai-sdk/xai';
+import { LanguageModel } from 'ai';
 import { BaseProvider } from './base.js';
 import type { ProviderConfig } from '../types/index.js';
 
@@ -21,7 +21,7 @@ const config: ProviderConfig = {
 };
 
 export class GrokProvider extends BaseProvider {
-  private client?: ReturnType<typeof createOpenAI>;
+  private client?: ReturnType<typeof createXai>;
   
   constructor() {
     super(config);
@@ -30,7 +30,7 @@ export class GrokProvider extends BaseProvider {
   private getClient() {
     if (!this.client) {
       this.assertAvailable();
-      this.client = createOpenAI({
+      this.client = createXai({
         apiKey: this.apiKey,
         baseURL: this.baseUrl || config.baseUrl,
       });
@@ -38,8 +38,8 @@ export class GrokProvider extends BaseProvider {
     return this.client;
   }
   
-  createModel(modelId?: string): LanguageModelV1 {
+  createModel(modelId?: string): LanguageModel {
     const model = modelId || this.config.defaultModel;
-    return this.getClient()(model);
+    return this.getClient()(model) as any;
   }
 }

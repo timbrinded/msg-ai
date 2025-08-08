@@ -1,5 +1,5 @@
-import { createOpenAI } from '@ai-sdk/openai';
-import { LanguageModelV1 } from 'ai';
+import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
+import { LanguageModel } from 'ai';
 import { BaseProvider } from './base.js';
 import type { ProviderConfig } from '../types/index.js';
 
@@ -8,7 +8,7 @@ const config: ProviderConfig = {
   displayName: 'Kimi (Moonshot)',
   envKey: 'KIMI_API_KEY',
   alternativeEnvKeys: ['MOONSHOT_API_KEY'],
-  baseUrl: 'https://api.moonshot.cn/v1',
+  baseUrl: 'https://api.moonshot.ai/v1',
   defaultModel: 'moonshot-v1-8k',
   models: [
     { id: 'moonshot-v1-8k', name: 'Moonshot v1 8K', maxTokens: 8192 },
@@ -18,7 +18,7 @@ const config: ProviderConfig = {
 };
 
 export class KimiProvider extends BaseProvider {
-  private client?: ReturnType<typeof createOpenAI>;
+  private client?: ReturnType<typeof createOpenAICompatible>;
   
   constructor() {
     super(config);
@@ -27,16 +27,17 @@ export class KimiProvider extends BaseProvider {
   private getClient() {
     if (!this.client) {
       this.assertAvailable();
-      this.client = createOpenAI({
-        apiKey: this.apiKey,
+      this.client = createOpenAICompatible({
         baseURL: this.baseUrl || config.baseUrl,
+        apiKey: this.apiKey,
+        name: 'kimi',
       });
     }
     return this.client;
   }
   
-  createModel(modelId?: string): LanguageModelV1 {
+  createModel(modelId?: string): LanguageModel {
     const model = modelId || this.config.defaultModel;
-    return this.getClient()(model);
+    return this.getClient().chatModel(model) as any;
   }
 }

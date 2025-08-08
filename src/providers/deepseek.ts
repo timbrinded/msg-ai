@@ -1,5 +1,5 @@
-import { createOpenAI } from '@ai-sdk/openai';
-import { LanguageModelV1 } from 'ai';
+import { createDeepSeek } from '@ai-sdk/deepseek';
+import { LanguageModel } from 'ai';
 import { BaseProvider } from './base.js';
 import type { ProviderConfig } from '../types/index.js';
 
@@ -7,7 +7,7 @@ const config: ProviderConfig = {
   name: 'deepseek',
   displayName: 'DeepSeek',
   envKey: 'DEEPSEEK_API_KEY',
-  baseUrl: 'https://api.deepseek.com/v1',
+  baseUrl: 'https://api.deepseek.com',
   defaultModel: 'deepseek-chat',
   models: [
     { id: 'deepseek-chat', name: 'DeepSeek Chat', maxTokens: 65536 },
@@ -16,7 +16,7 @@ const config: ProviderConfig = {
 };
 
 export class DeepseekProvider extends BaseProvider {
-  private client?: ReturnType<typeof createOpenAI>;
+  private client?: ReturnType<typeof createDeepSeek>;
   
   constructor() {
     super(config);
@@ -25,16 +25,16 @@ export class DeepseekProvider extends BaseProvider {
   private getClient() {
     if (!this.client) {
       this.assertAvailable();
-      this.client = createOpenAI({
+      this.client = createDeepSeek({
         apiKey: this.apiKey,
-        baseURL: this.baseUrl || config.baseUrl,
+        baseURL: this.baseUrl,
       });
     }
     return this.client;
   }
   
-  createModel(modelId?: string): LanguageModelV1 {
+  createModel(modelId?: string): LanguageModel {
     const model = modelId || this.config.defaultModel;
-    return this.getClient()(model);
+    return this.getClient()(model) as any;
   }
 }

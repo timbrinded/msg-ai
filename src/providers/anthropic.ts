@@ -1,5 +1,5 @@
 import { createAnthropic } from '@ai-sdk/anthropic';
-import { LanguageModelV1 } from 'ai';
+import { LanguageModel } from 'ai';
 import { BaseProvider } from './base.js';
 import type { ProviderConfig } from '../types/index.js';
 
@@ -10,6 +10,7 @@ const config: ProviderConfig = {
   alternativeEnvKeys: ['CLAUDE_API_KEY'],
   defaultModel: 'claude-3-5-sonnet-20241022',
   models: [
+    { id: 'claude-opus-4-1-20250805', name: 'Claude Opus 4.1 (Aug 2025)', maxTokens: 200000 },
     { id: 'claude-3-5-sonnet-20241022', name: 'Claude 3.5 Sonnet (Oct 2024)', maxTokens: 8192 },
     { id: 'claude-3-5-haiku-20241022', name: 'Claude 3.5 Haiku (Oct 2024)', maxTokens: 8192 },
     { id: 'claude-3-opus-20240229', name: 'Claude 3 Opus', maxTokens: 4096 },
@@ -54,6 +55,9 @@ export class AnthropicProvider extends BaseProvider {
       // Anthropic doesn't have a public models endpoint yet
       // So we'll use an enhanced static list of all current Claude models
       const anthropicModels = [
+        // Claude Opus 4 (newest and most capable)
+        'claude-opus-4-1-20250805',
+        
         // Claude 3.5 models (newest)
         'claude-3-5-sonnet-20241022',
         'claude-3-5-haiku-20241022',
@@ -85,7 +89,7 @@ export class AnthropicProvider extends BaseProvider {
     }
   }
   
-  createModel(modelId?: string): LanguageModelV1 {
+  createModel(modelId?: string): LanguageModel {
     const model = modelId || this.config.defaultModel;
     return this.getClient()(model) as any;
   }

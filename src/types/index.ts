@@ -34,6 +34,7 @@ export interface ChatOptions {
   maxTokens?: number;
   systemPrompt?: string;
   stream?: boolean;
+  reasoningEffort?: 'minimal' | 'low' | 'medium' | 'high';
 }
 
 export interface ChatRequest {

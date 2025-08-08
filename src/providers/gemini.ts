@@ -1,5 +1,5 @@
 import { createGoogleGenerativeAI } from '@ai-sdk/google';
-import { LanguageModelV1 } from 'ai';
+import { LanguageModel } from 'ai';
 import { BaseProvider } from './base.js';
 import type { ProviderConfig } from '../types/index.js';
 
@@ -85,7 +85,7 @@ export class GeminiProvider extends BaseProvider {
     }
   }
   
-  createModel(modelId?: string): LanguageModelV1 {
+  createModel(modelId?: string): LanguageModel {
     const model = modelId || this.config.defaultModel;
     return this.getClient()(model) as any;
   }

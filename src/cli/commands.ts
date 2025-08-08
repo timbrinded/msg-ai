@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import ora from 'ora';
 import { ProviderRegistry } from '../providers/registry.js';
-import { withErrorHandling } from '../utils/errors.js';
+import { withErrorHandling, handleChatError } from '../utils/errors.js';
 import { formatModelsTable } from '../utils/model-formatter.js';
 import type { ChatOptions } from '../types/index.js';
 
@@ -13,7 +13,7 @@ export class ChatCommand {
     message: string,
     options: ChatOptions
   ): Promise<void> {
-    await withErrorHandling(async () => {
+    try {
       // Auto-detect provider if not specified
       const provider = providerName 
         ? this.registry.get(providerName)
@@ -40,15 +40,45 @@ export class ChatCommand {
           spinner.stop();
           console.log(chalk.cyan(`${provider.displayName}:`));
           
-          const stream = provider.streamChat(
-            [{ role: 'user', content: message }],
-            options
-          );
-          
-          for await (const chunk of stream) {
-            process.stdout.write(chunk);
+          let errorOccurred = false;
+          try {
+            const stream = provider.streamChat(
+              [{ role: 'user', content: message }],
+              options
+            );
+            
+            for await (const chunk of stream) {
+              process.stdout.write(chunk);
+            }
+            console.log();
+          } catch (streamError: any) {
+            errorOccurred = true;
+            // Clear the provider name line and spinner output
+            process.stdout.write('\r\x1b[K\x1b[1A\x1b[K');
+            
+            // Show only essential error info
+            if (streamError?.statusCode && streamError?.responseBody) {
+              console.error(chalk.red(`\n❌ ${streamError.name || 'API Error'} (${streamError.statusCode})`));
+              
+              try {
+                const responseData = JSON.parse(streamError.responseBody);
+                if (responseData.error?.message) {
+                  console.error(chalk.yellow(`   ${responseData.error.message}`));
+                } else if (responseData.error) {
+                  console.error(chalk.yellow(`   ${typeof responseData.error === 'string' ? responseData.error : JSON.stringify(responseData.error)}`));
+                } else {
+                  console.error(chalk.yellow(`   ${streamError.responseBody}`));
+                }
+              } catch {
+                console.error(chalk.yellow(`   ${streamError.responseBody}`));
+              }
+            } else {
+              console.error(chalk.red(`\n❌ ${streamError.name || 'Error'}`));
+              console.error(chalk.yellow(`   ${streamError.message}`));
+            }
+            
+            process.exit(1);
           }
-          console.log();
         } else {
           const response = await provider.chat(
             [{ role: 'user', content: message }],
@@ -68,10 +98,13 @@ export class ChatCommand {
           }
         }
       } catch (error) {
-        spinner.fail(chalk.red('Failed to get response'));
-        throw error;
+        spinner.stop();
+        // Handle the error directly here for better formatting
+        handleChatError(error, provider.displayName);
       }
-    }, 'chat command');
+    } catch (error) {
+      handleChatError(error, providerName);
+    }
   }
 }
 

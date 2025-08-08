@@ -15,7 +15,7 @@
   },
   "scripts": {
     "dev": "bun run src/index.ts",
-    "build": "bun build src/index.ts --outdir dist --target node --format esm --external @ai-sdk/anthropic --external @ai-sdk/google --external @ai-sdk/openai --external ai --external chalk --external commander --external dotenv --external ora --external zod",
+    "build": "bun build src/index.ts --outdir dist --target node --format esm --external @ai-sdk/anthropic --external @ai-sdk/google --external @ai-sdk/openai --external @ai-sdk/xai --external ai --external chalk --external commander --external dotenv --external ora --external zod",
     "test": "bun test",
     "lint": "eslint src",
     "typecheck": "tsc --noEmit",
@@ -50,21 +50,24 @@
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^2.0.1",
+    "@ai-sdk/deepseek": "^1.0.3",
     "@ai-sdk/google": "^1.2.22",
-    "@ai-sdk/openai": "^1.0.14",
-    "ai": "^4.0.37",
-    "chalk": "^5.3.0",
+    "@ai-sdk/openai": "^2.0.6",
+    "@ai-sdk/openai-compatible": "^1.0.3",
+    "@ai-sdk/xai": "^2.0.3",
+    "ai": "^5.0.8",
+    "chalk": "^5.5.0",
     "commander": "^12.1.0",
-    "dotenv": "^16.4.7",
-    "ora": "^8.1.1",
-    "zod": "^3.24.1"
+    "dotenv": "^16.6.1",
+    "ora": "^8.2.0",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@types/bun": "^1.2.19",
-    "@types/node": "^22.10.5",
-    "@typescript-eslint/eslint-plugin": "^8.20.0",
-    "@typescript-eslint/parser": "^8.20.0",
-    "eslint": "^9.18.0",
-    "typescript": "^5.7.2"
+    "@types/node": "^22.17.0",
+    "@typescript-eslint/eslint-plugin": "^8.39.0",
+    "@typescript-eslint/parser": "^8.39.0",
+    "eslint": "^9.32.0",
+    "typescript": "^5.9.2"
   }
 }

@@ -1,4 +1,4 @@
-import { CoreMessage, generateText, streamText, LanguageModelV1 } from 'ai';
+import { CoreMessage, generateText, streamText, LanguageModel } from 'ai';
 import { ApiKeyMissingError } from '../utils/errors.js';
 import type { ChatOptions, ChatResponse, ProviderConfig } from '../types/index.js';
 
@@ -57,7 +57,7 @@ export abstract class BaseProvider {
     return this.getAvailableModels();
   }
   
-  abstract createModel(modelId?: string): LanguageModelV1;
+  abstract createModel(modelId?: string): LanguageModel;
   
   async chat(
     messages: CoreMessage[], 
@@ -68,21 +68,30 @@ export abstract class BaseProvider {
     const modelId = options?.model || this.config.defaultModel;
     const model = this.createModel(modelId);
     
-    const result = await generateText({
+    const generateOptions: any = {
       model,
       messages,
       temperature: options?.temperature,
-      maxTokens: options?.maxTokens,
-    });
+      maxRetries: 3,
+    };
+    
+    // Add reasoning effort for OpenAI GPT-5 models
+    if (options?.reasoningEffort && this.name === 'openai') {
+      generateOptions.providerOptions = {
+        openai: { reasoningEffort: options.reasoningEffort }
+      };
+    }
+    
+    const result = await generateText(generateOptions);
     
     return {
       content: result.text,
       provider: this.name,
       model: modelId,
       usage: result.usage ? {
-        promptTokens: result.usage.promptTokens,
-        completionTokens: result.usage.completionTokens,
-        totalTokens: result.usage.totalTokens,
+        promptTokens: result.usage.inputTokens || 0,
+        completionTokens: result.usage.outputTokens || 0,
+        totalTokens: result.usage.totalTokens || ((result.usage.inputTokens || 0) + (result.usage.outputTokens || 0)),
       } : undefined,
     };
   }
@@ -96,15 +105,29 @@ export abstract class BaseProvider {
     const modelId = options?.model || this.config.defaultModel;
     const model = this.createModel(modelId);
     
-    const result = await streamText({
-      model,
-      messages,
-      temperature: options?.temperature,
-      maxTokens: options?.maxTokens,
-    });
-    
-    for await (const chunk of result.textStream) {
-      yield chunk;
+    try {
+      const streamOptions: any = {
+        model,
+        messages,
+        temperature: options?.temperature,
+        maxRetries: 3,
+      };
+      
+      // Add reasoning effort for OpenAI GPT-5 models
+      if (options?.reasoningEffort && this.name === 'openai') {
+        streamOptions.providerOptions = {
+          openai: { reasoningEffort: options.reasoningEffort }
+        };
+      }
+      
+      const result = await streamText(streamOptions);
+      
+      for await (const chunk of result.textStream) {
+        yield chunk;
+      }
+    } catch (error: any) {
+      // Re-throw with additional context if needed
+      throw error;
     }
   }
 }
