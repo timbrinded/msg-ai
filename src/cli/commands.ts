@@ -1,7 +1,7 @@
 import chalk from 'chalk';
 import ora from 'ora';
 import { ProviderRegistry } from '../providers/registry.js';
-import { withErrorHandling, handleChatError } from '../utils/errors.js';
+import { handleChatError } from '../utils/errors.js';
 import { formatModelsTable } from '../utils/model-formatter.js';
 import type { ChatOptions } from '../types/index.js';
 
@@ -40,7 +40,6 @@ export class ChatCommand {
           spinner.stop();
           console.log(chalk.cyan(`${provider.displayName}:`));
           
-          let errorOccurred = false;
           try {
             const stream = provider.streamChat(
               [{ role: 'user', content: message }],
@@ -52,7 +51,6 @@ export class ChatCommand {
             }
             console.log();
           } catch (streamError: any) {
-            errorOccurred = true;
             // Clear the provider name line and spinner output
             process.stdout.write('\r\x1b[K\x1b[1A\x1b[K');
             

@@ -28,8 +28,8 @@ export class KimiProvider extends BaseProvider {
     if (!this.client) {
       this.assertAvailable();
       this.client = createOpenAICompatible({
-        baseURL: this.baseUrl || config.baseUrl,
-        apiKey: this.apiKey,
+        baseURL: (this.baseUrl || config.baseUrl)!,
+        apiKey: this.apiKey!,
         name: 'kimi',
       });
     }

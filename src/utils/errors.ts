@@ -1,6 +1,6 @@
 import chalk from 'chalk';
 
-export function handleChatError(error: any, providerName?: string): never {
+export function handleChatError(error: any, _providerName?: string): never {
   // For AI SDK errors, show only essential info
   if (error?.statusCode && error?.responseBody) {
     console.error(chalk.red(`\n❌ ${error.name || 'API Error'} (${error.statusCode})`));
