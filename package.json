@@ -1,0 +1,70 @@
+{
+  "name": "msg-ai",
+  "version": "2.0.0",
+  "description": "Multi-provider AI chat CLI with Vercel AI SDK - Bun optimized",
+  "main": "./src/index.ts",
+  "type": "module",
+  "bin": {
+    "msg-ai": "./dist/cli.js"
+  },
+  "exports": {
+    ".": {
+      "bun": "./src/index.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "scripts": {
+    "dev": "bun run src/index.ts",
+    "build": "bun build src/index.ts --outdir dist --target node --format esm --external @ai-sdk/anthropic --external @ai-sdk/google --external @ai-sdk/openai --external ai --external chalk --external commander --external dotenv --external ora --external zod",
+    "test": "bun test",
+    "lint": "eslint src",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "npm run build && npm run typecheck"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "bun": ">=1.0.0"
+  },
+  "packageManager": "bun@1.1.0",
+  "keywords": [
+    "ai",
+    "chat",
+    "cli",
+    "openai",
+    "gemini",
+    "grok",
+    "bun"
+  ],
+  "author": "",
+  "license": "MIT",
+  "files": [
+    "dist",
+    "src",
+    "bunfig.toml",
+    "README.md",
+    "LICENSE"
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/"
+  },
+  "dependencies": {
+    "@ai-sdk/anthropic": "^2.0.1",
+    "@ai-sdk/google": "^1.2.22",
+    "@ai-sdk/openai": "^1.0.14",
+    "ai": "^4.0.37",
+    "chalk": "^5.3.0",
+    "commander": "^12.1.0",
+    "dotenv": "^16.4.7",
+    "ora": "^8.1.1",
+    "zod": "^3.24.1"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.19",
+    "@types/node": "^22.10.5",
+    "@typescript-eslint/eslint-plugin": "^8.20.0",
+    "@typescript-eslint/parser": "^8.20.0",
+    "eslint": "^9.18.0",
+    "typescript": "^5.7.2"
+  }
+}

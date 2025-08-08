@@ -1,0 +1,39 @@
+# Bun configuration for ai-chat-cli
+
+[install]
+# Auto-install behavior
+auto = "fallback"
+
+# Trusted dependencies that may have postinstall scripts
+trustedDependencies = [
+  "@ai-sdk/google",
+  "@ai-sdk/openai"
+]
+
+# Automatically install peer dependencies
+peer = false
+
+# Install dev dependencies
+dev = true
+
+# Install optional dependencies
+optional = false
+
+[install.cache]
+# Cache directory for packages
+dir = "~/.bun/install/cache"
+disable = false
+
+[test]
+# Configure test runner
+root = "./src"
+preload = ["./src/test-setup.ts"]
+coverage = true
+coverageThreshold = 80
+
+[run]
+# Auto-install missing packages when running
+autoInstall = true
+
+# Silent mode for cleaner output
+silent = false
