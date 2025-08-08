@@ -1,21 +1,23 @@
 {
   "name": "msg-ai",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Multi-provider AI chat CLI with Vercel AI SDK - Bun optimized",
-  "main": "./src/index.ts",
+  "main": "./dist/index.cjs",
   "type": "module",
+  "zshy": "./src/index.ts",
   "bin": {
     "msg-ai": "./dist/cli.js"
   },
   "exports": {
     ".": {
-      "bun": "./src/index.ts",
-      "default": "./dist/index.js"
+      "types": "./dist/index.d.cts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
     }
   },
   "scripts": {
     "dev": "bun run src/index.ts",
-    "build": "bun build src/index.ts --outdir dist --target node --format esm --external @ai-sdk/anthropic --external @ai-sdk/google --external @ai-sdk/openai --external @ai-sdk/xai --external ai --external chalk --external commander --external dotenv --external ora --external zod",
+    "build": "tsx",
     "test": "bun test",
     "lint": "eslint src",
     "typecheck": "tsc --noEmit",
@@ -68,6 +70,9 @@
     "@typescript-eslint/eslint-plugin": "^8.39.0",
     "@typescript-eslint/parser": "^8.39.0",
     "eslint": "^9.32.0",
-    "typescript": "^5.9.2"
-  }
+    "typescript": "^5.9.2",
+    "zshy": "^0.3.5"
+  },
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.cts"
 }
