@@ -1,23 +1,18 @@
 {
   "name": "msg-ai",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "description": "Multi-provider AI chat CLI with Vercel AI SDK - Bun optimized",
   "main": "./dist/index.cjs",
   "type": "module",
-  "zshy": "./src/index.ts",
-  "bin": {
-    "msg-ai": "./dist/cli.js"
-  },
-  "exports": {
-    ".": {
-      "types": "./dist/index.d.cts",
-      "import": "./dist/index.js",
-      "require": "./dist/index.cjs"
+  "zshy": {
+    "bin": "./src/index.ts",
+    "exports": {
+      ".": "./src/index.ts"
     }
   },
   "scripts": {
     "dev": "bun run src/index.ts",
-    "build": "tsx",
+    "build": "zshy",
     "test": "bun test",
     "lint": "eslint src",
     "typecheck": "tsc --noEmit",
@@ -74,5 +69,13 @@
     "zshy": "^0.3.5"
   },
   "module": "./dist/index.js",
-  "types": "./dist/index.d.cts"
+  "types": "./dist/index.d.cts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.cts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "bin": "./dist/index.cjs"
 }
